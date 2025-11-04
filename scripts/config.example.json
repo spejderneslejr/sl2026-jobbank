@@ -1,0 +1,4 @@
+{
+  "job_export_url": "https://tilmelding.spejderneslejr.dk/exports/6?api_key=YOUR_JOB_EXPORT_API_KEY",
+  "org_export_url": "https://tilmelding.spejderneslejr.dk/exports/9?api_key=YOUR_ORG_EXPORT_API_KEY"
+}

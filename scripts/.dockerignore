@@ -1,0 +1,9 @@
+# Ignore everything except what we need
+*
+
+# Include only required files
+!fetch-job-export.py
+!config.json
+
+# Note: config.json must exist before building
+# If it doesn't exist, copy from config.example.json

@@ -1,0 +1,127 @@
+/* CSS Custom Properties - Design Tokens */
+:root {
+  /* Brand Colors */
+  --color-primary-green: rgb(4, 106, 56);
+  --color-primary-green-hover: rgba(4, 106, 56, 0.85);
+  --color-primary-green-light: rgba(4, 106, 56, 0.1);
+  --color-primary-green-lighter: rgba(4, 106, 56, 0.2);
+
+  --color-accent-yellow: rgb(253, 186, 77);
+  --color-accent-yellow-light: rgba(253, 186, 77, 0.2);
+
+  --color-accent-orange: #f0a025;
+
+  --color-success: #00aa44;
+  --color-success-hover: #008835;
+
+  /* Neutral Colors */
+  --color-background: #f5f7fa;
+  --color-white: #ffffff;
+  --color-text-primary: #2c3e50;
+  --color-text-secondary: #666;
+  --color-text-tertiary: #999;
+  --color-text-light: #555;
+
+  /* Border & Divider Colors */
+  --color-border: #ddd;
+  --color-border-light: #eee;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 24px;
+  --spacing-3xl: 32px;
+  --spacing-4xl: 40px;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 50%;
+
+  /* Font Sizes */
+  --font-size-xs: 0.875rem;
+  --font-size-sm: 0.9rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.1rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights */
+  --line-height-tight: 1.3;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+  --line-height-loose: 1.7;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 10px 40px rgba(0, 0, 0, 0.2);
+
+  /* Layout */
+  --max-width-content: 1200px;
+}
+
+/* Global CSS Reset and Base Styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+}
+
+#app {
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--color-primary-green);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+}
