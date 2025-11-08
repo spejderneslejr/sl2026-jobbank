@@ -6,6 +6,8 @@
   --color-primary-green-light: rgba(4, 106, 56, 0.1);
   --color-primary-green-lighter: rgba(4, 106, 56, 0.2);
 
+  --color-footer-green: #005D41;
+
   --color-accent-yellow: rgb(253, 186, 77);
   --color-accent-yellow-light: rgba(253, 186, 77, 0.2);
 
@@ -14,17 +16,32 @@
   --color-success: #00aa44;
   --color-success-hover: #008835;
 
-  /* Neutral Colors */
+  /* Neutral Colors - Light Mode */
   --color-background: #f5f7fa;
   --color-white: #ffffff;
+  --color-card-bg: #ffffff;
+  --color-hover-bg: #f5f5f5;
   --color-text-primary: #2c3e50;
   --color-text-secondary: #666;
   --color-text-tertiary: #999;
   --color-text-light: #555;
+  --color-text-dark: #333;
 
   /* Border & Divider Colors */
   --color-border: #ddd;
   --color-border-light: #eee;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 10px 40px rgba(0, 0, 0, 0.2);
+
+  /* Modal */
+  --color-modal-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Button Colors */
+  --color-button-text-on-green: #ffffff;
 
   /* Spacing */
   --spacing-xs: 4px;
@@ -68,14 +85,44 @@
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
 
-  /* Shadows */
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
-  --shadow-xl: 0 10px 40px rgba(0, 0, 0, 0.2);
-
   /* Layout */
   --max-width-content: 1200px;
+}
+
+/* Dark Mode Theme */
+[data-theme="dark"] {
+  /* Background Colors */
+  --color-background: #0A192D;
+  --color-white: #112240;
+  --color-card-bg: #112240;
+  --color-hover-bg: #1a2942;
+
+  /* Text Colors */
+  --color-text-primary: #dfdada;
+  --color-text-secondary: #a8b2d1;
+  --color-text-tertiary: #8892b0;
+  --color-text-light: #a8b2d1;
+  --color-text-dark: #dfdada;
+
+  /* Border Colors */
+  --color-border: #233554;
+  --color-border-light: #1a2942;
+
+  /* Accent Colors */
+  --color-accent-yellow: #FDBA4D;
+  --color-accent-yellow-light: rgba(253, 186, 77, 0.2);
+
+  /* Button Colors */
+  --color-button-text-on-green: rgb(213, 209, 209);
+
+  /* Shadows - Darker for depth */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 10px 40px rgba(0, 0, 0, 0.6);
+
+  /* Modal */
+  --color-modal-overlay: rgba(0, 0, 0, 0.7);
 }
 
 /* Global CSS Reset and Base Styles */

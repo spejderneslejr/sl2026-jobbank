@@ -74,6 +74,11 @@ export default {
     },
   },
   methods: {
+    initializeTheme() {
+      // Load saved theme preference from localStorage
+      const savedTheme = localStorage.getItem('theme-preference') || 'light'
+      document.documentElement.setAttribute('data-theme', savedTheme)
+    },
     async fetchJobs() {
       try {
         // Try to load from public jobs-export.json (production data)
@@ -194,6 +199,7 @@ export default {
     },
   },
   mounted() {
+    this.initializeTheme()
     this.fetchJobs()
   },
 }
@@ -209,8 +215,8 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-  background: #f5f7fa;
-  color: #2c3e50;
+  background: var(--color-background);
+  color: var(--color-text-primary);
 }
 
 .jobs-app {
@@ -227,14 +233,14 @@ body {
 .app-header h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #2c3e50;
+  color: var(--color-text-primary);
   margin: 0 0 16px 0;
 }
 
 .intro-text {
   font-size: 1.1rem;
-  color: black;
-  background-color: #e9ecef;
+  color: var(--color-text-primary);
+  background-color: var(--color-border-light);
   padding: 20px;
   line-height: 1.6;
   max-width: 900px;

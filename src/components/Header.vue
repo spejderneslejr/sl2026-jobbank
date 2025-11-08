@@ -1,17 +1,49 @@
 <template>
   <header class="site-header">
     <div class="header-content">
-      <img src="/sl2026-camp-logo.svg" alt="Spejdernes Lejr 2026" class="camp-logo" />
-      <div class="site-title-container">
-        <h1 class="site-title">Jobbank</h1>
+      <div class="header-left">
+        <img :src="logoSrc" alt="Spejdernes Lejr 2026" class="camp-logo" />
+        <div class="site-title-container">
+          <h1 class="site-title">Jobbank</h1>
+        </div>
       </div>
+      <ThemeToggle />
     </div>
   </header>
 </template>
 
 <script>
+import ThemeToggle from './ThemeToggle.vue'
+
 export default {
   name: 'Header',
+  components: {
+    ThemeToggle,
+  },
+  data() {
+    return {
+      logoSrc: '/sl2026-camp-logo.svg',
+    }
+  },
+  mounted() {
+    this.updateLogo()
+    // Listen for theme changes
+    const observer = new MutationObserver(() => {
+      this.updateLogo()
+    })
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+  },
+  methods: {
+    updateLogo() {
+      const theme = document.documentElement.getAttribute('data-theme')
+      this.logoSrc = theme === 'dark'
+        ? '/sl2026-camp-logo-positive.svg'
+        : '/sl2026-camp-logo.svg'
+    },
+  },
 }
 </script>
 
@@ -27,6 +59,13 @@ export default {
   max-width: var(--max-width-content);
   margin: 0 auto;
   padding: 0 var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2xl);
+}
+
+.header-left {
   display: flex;
   align-items: center;
   gap: var(--spacing-2xl);
@@ -59,6 +98,10 @@ export default {
 
   .header-content {
     padding: 0 var(--spacing-lg);
+    gap: var(--spacing-lg);
+  }
+
+  .header-left {
     gap: var(--spacing-lg);
   }
 

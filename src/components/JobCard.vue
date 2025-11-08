@@ -94,7 +94,7 @@ export default {
 .btn-secondary {
   padding: var(--spacing-sm) var(--spacing-lg);
   background: var(--color-primary-green);
-  color: var(--color-white);
+  color: var(--color-button-text-on-green);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
