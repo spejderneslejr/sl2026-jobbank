@@ -22,7 +22,7 @@ export default {
   },
   data() {
     return {
-      logoSrc: '/sl2026-camp-logo.svg',
+      logoSrc: './sl2026-camp-logo.svg',
     }
   },
   mounted() {
@@ -40,8 +40,8 @@ export default {
     updateLogo() {
       const theme = document.documentElement.getAttribute('data-theme')
       this.logoSrc = theme === 'dark'
-        ? '/sl2026-camp-logo-positive.svg'
-        : '/sl2026-camp-logo.svg'
+        ? './sl2026-camp-logo-positive.svg'
+        : './sl2026-camp-logo.svg'
     },
   },
 }
