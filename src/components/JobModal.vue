@@ -425,7 +425,7 @@ export default {
 
 .btn-primary {
   background: var(--color-primary-green);
-  color: rgb(213, 209, 209);
+  color: var(--color-button-text-on-green);
 }
 
 .btn-primary:hover {

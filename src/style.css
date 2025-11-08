@@ -40,6 +40,9 @@
   /* Modal */
   --color-modal-overlay: rgba(0, 0, 0, 0.5);
 
+  /* Button Colors */
+  --color-button-text-on-green: #ffffff;
+
   /* Spacing */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
@@ -108,6 +111,9 @@
   /* Accent Colors */
   --color-accent-yellow: #FDBA4D;
   --color-accent-yellow-light: rgba(253, 186, 77, 0.2);
+
+  /* Button Colors */
+  --color-button-text-on-green: rgb(213, 209, 209);
 
   /* Shadows - Darker for depth */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
