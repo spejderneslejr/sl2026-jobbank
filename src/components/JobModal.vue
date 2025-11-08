@@ -313,8 +313,8 @@ export default {
 }
 
 .btn-close:hover {
-  background: #f5f5f5;
-  color: #333;
+  background: var(--color-hover-bg);
+  color: var(--color-text-dark);
 }
 
 .modal-body {
@@ -425,7 +425,7 @@ export default {
 
 .btn-primary {
   background: var(--color-primary-green);
-  color: var(--color-white);
+  color: rgb(213, 209, 209);
 }
 
 .btn-primary:hover {

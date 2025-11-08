@@ -36,8 +36,8 @@ export default {
 
 <style scoped>
 .site-footer {
-  background: var(--color-primary-green);
-  color: var(--color-white);
+  background: var(--color-footer-green);
+  color: #ffffff;
   padding: var(--spacing-4xl) 0;
   margin-top: 60px;
 }
@@ -67,16 +67,16 @@ export default {
 .scout-logo {
   height: 50px;
   width: auto;
-  filter: brightness(0) invert(1);
+  filter: brightness(0) invert(0.85);
 }
 
 .scout-logo:nth-child(4) {
   /* DBS logo - no special treatment needed */
-  filter: brightness(0) invert(1);
+  filter: brightness(0) invert(0.85);
 }
 
 .footer-info {
-  color: var(--color-white);
+  color: #ffffff;
 }
 
 .footer-info p {
