@@ -9,4 +9,4 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
     labels:
       - "traefik.backend=jobs.spejderneslejr.dk"
-      - "traefik.frontend.rule=Host:jobs.spejderneslejr.dk"
+      - "traefik.frontend.rule=Host:jobs.spejderneslejr.dk,jobs.anne.flab.dk"
