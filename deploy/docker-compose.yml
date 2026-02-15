@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  caddy:
+    image: caddy:alpine
+    restart: unless-stopped
+    volumes:
+      - ./htdocs:/srv:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    labels:
+      - "traefik.backend=jobs.spejderneslejr.dk"
+      - "traefik.frontend.rule=Host:jobs.spejderneslejr.dk,jobs.anne.flab.dk"
