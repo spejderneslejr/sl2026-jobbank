@@ -6,7 +6,13 @@ A Vue 3 + Vite application for browsing and applying to volunteer positions for 
 
 ```
 sl2026-jobbank/
-├── public/.                      # Static assets included in build
+├── .github/workflows/deploy.yml  # GitHub Actions deploy workflow
+├── deploy/
+│   ├── Caddyfile                 # Caddy server config
+│   ├── docker-compose.yml        # Container setup for production
+│   └── deploy.sh                 # Build & deploy script
+├── scripts/                      # Data export scripts
+├── public/                       # Static assets included in build
 ├── src/
 │   ├── components/
 │   │   ├── Layout.vue            # Page layout wrapper
@@ -57,31 +63,52 @@ npm run preview
 
 ## Data Management
 
-The application loads job data from `/public/jobs-export.json`. This file is generated from an Excel export using the conversion script in the parent directory.
+Job data is loaded from `/jobs-export.json` at runtime. This file is managed by a server-side cron job that exports from Odoo and is **not** part of the deployment — it lives on the server independently.
 
-To update job data:
-
-1. Place new Excel export in `/references/job-export/`
-2. Run the conversion script:
-```bash
-python3 ../convert_jobs.py
-```
-3. Copy the generated JSON to public/:
-```bash
-cp ../references/jobs/jobs-export.json public/
-```
-4. Rebuild and deploy
+To update job data manually, see the export scripts in `scripts/`.
 
 ## Deployment
 
-This is a static site that can be deployed to:
-- Netlify
-- Vercel
-- GitHub Pages
-- Cloudflare Pages
-- Any static hosting service
+The site is deployed as static files served by a Caddy container behind Traefik.
 
-Simply build the project and deploy the `dist/` directory.
+### Server setup
+
+The `deploy/` directory contains the server-side configuration:
+
+- `docker-compose.yml` — Caddy Alpine container with Traefik labels
+- `Caddyfile` — Static file server with SPA fallback
+
+On the server:
+```bash
+mkdir -p ~/sl2026/jobbank/htdocs
+cd ~/sl2026/jobbank
+# Place docker-compose.yml and Caddyfile here
+docker-compose up -d
+```
+
+### Automated deployment
+
+Pushes to `main` trigger a GitHub Actions workflow (`.github/workflows/deploy.yml`) that:
+
+1. Builds the project
+2. Writes `version.json` with the git SHA, tags, and timestamp
+3. Rsyncs `dist/` to the server (preserving `jobs-export.json`)
+
+Required GitHub secrets: `DEPLOY_SSH_KEY`, `DEPLOY_HOST`, `DEPLOY_USER`.
+
+### Manual deployment
+
+```bash
+DEPLOY_HOST=example.com DEPLOY_USER=deploy bash deploy/deploy.sh
+```
+
+### Version info
+
+Each deploy writes a `version.json` to the site root:
+```json
+{"sha": "a832e2f...", "short_sha": "a832e2f", "tags": ["v1.0.0"], "deployed_at": "2026-02-15T21:50:00Z"}
+```
+Access it at `https://jobs.spejderneslejr.dk/version.json`.
 
 ## Features Implemented
 
