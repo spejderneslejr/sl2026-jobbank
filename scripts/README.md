@@ -4,12 +4,6 @@ This directory contains the production script for fetching job data from the Cam
 
 ## fetch-job-export.py
 
-**Purpose**: Fetch job and organization data from CampOS API and generate `jobs-export.json`.
-
-**Status**: ✅ Production ready
-
----
-
 ## Running with Docker (Recommended for Servers)
 
 **Requirements**:
