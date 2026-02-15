@@ -13,6 +13,15 @@ cd "$PROJECT_DIR"
 npm ci
 npm run build
 
+echo "Writing version.json..."
+SHA="$(git rev-parse HEAD)"
+SHORT_SHA="$(git rev-parse --short HEAD)"
+TAGS="$(git tag --points-at HEAD 2>/dev/null | sed 's/.*/"&"/' | paste -sd, - || echo "")"
+TAGS="[${TAGS}]"
+printf '{"sha":"%s","short_sha":"%s","tags":%s,"deployed_at":"%s"}\n' \
+  "$SHA" "$SHORT_SHA" "$TAGS" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  > "$PROJECT_DIR/dist/version.json"
+
 echo "Deploying to ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
 rsync -avz --delete \
   --exclude='jobs-export.json' \
