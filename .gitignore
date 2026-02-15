@@ -41,4 +41,4 @@ Thumbs.db
 public/jobs-export.json
 
 # Deployed site directory
-site/
+htdocs/
