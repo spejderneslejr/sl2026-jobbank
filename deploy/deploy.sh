@@ -3,7 +3,7 @@ set -euo pipefail
 
 DEPLOY_HOST="${DEPLOY_HOST:?DEPLOY_HOST is required}"
 DEPLOY_USER="${DEPLOY_USER:?DEPLOY_USER is required}"
-DEPLOY_PATH="${DEPLOY_PATH:-~/sl2026/jobbank/site/}"
+DEPLOY_PATH="${DEPLOY_PATH:-/home/hostroot/sites/danquah/sljob/htdocs/}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"

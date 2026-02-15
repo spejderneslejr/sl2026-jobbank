@@ -26,7 +26,7 @@ jobs:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
 
       - name: Deploy
-        run: bash scripts/deploy.sh
+        run: bash deploy/deploy.sh
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
