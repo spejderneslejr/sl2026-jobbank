@@ -40,5 +40,9 @@ Thumbs.db
 # Export
 public/jobs-export.json
 
+# Deploy keys
+deploy_key
+deploy_key.pub
+
 # Deployed site directory
 htdocs/
