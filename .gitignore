@@ -39,3 +39,6 @@ Thumbs.db
 
 # Export
 public/jobs-export.json
+
+# Deployed site directory
+site/
