@@ -91,12 +91,16 @@ export default {
       type: String,
       default: '',
     },
+    initialArea: {
+      type: String,
+      default: '',
+    },
   },
   emits: ['search', 'area-filter', 'sort-change'],
   data() {
     return {
       searchQuery: this.initialSearch,
-      selectedArea: '',
+      selectedArea: this.initialArea,
       selectedSort: DEFAULT_SORT.field,
       sortDirection: DEFAULT_SORT.direction,
       sortLabels: SORT_LABELS,
@@ -124,6 +128,16 @@ export default {
         field: this.selectedSort,
         direction: this.sortDirection,
       })
+    },
+  },
+  watch: {
+    // initialArea arrives late (after orgMap loads from jobs-export.json),
+    // so we can't rely on data() alone — update the dropdown when it arrives.
+    initialArea(newVal) {
+      if (newVal && !this.selectedArea) {
+        this.selectedArea = newVal
+        this.handleAreaChange()
+      }
     },
   },
   mounted() {

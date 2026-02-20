@@ -21,6 +21,7 @@
       :areas="availableAreas"
       :result-count="filteredJobs.length"
       :initial-search="initialSearch"
+      :initial-area="initialArea"
       @search="handleSearch"
       @area-filter="handleAreaFilter"
       @sort-change="handleSortChange"
@@ -63,6 +64,7 @@ export default {
       selectedArea: '',
       sortField: null,
       sortDirection: null,
+      orgMap: {},
     }
   },
   computed: {
@@ -75,6 +77,12 @@ export default {
     },
     initialSearch() {
       return this.$route.query.search || ''
+    },
+    initialArea() {
+      if (this.$route.query.organization) {
+        return this.orgMap[this.$route.query.organization] || ''
+      }
+      return ''
     },
   },
   watch: {
@@ -99,19 +107,24 @@ export default {
           throw new Error('Failed to fetch jobs-export.json')
         }
 
-        const jobs = await response.json()
+        const data = await response.json()
+        const jobs = data.jobs
+        this.orgMap = data.org_map || {}
 
         // Check if the data is valid (has jobs)
         if (Array.isArray(jobs) && jobs.length > 0) {
           // Apply staffing filter based on configuration
           this.allJobs = applyStaffingFilter(jobs)
           this.filteredJobs = this.allJobs
-      }
+        }
 
-
-        // Apply initial search query from URL
+        // Apply initial filters from URL query params
         if (this.$route.query.search) {
           this.handleSearch(this.$route.query.search)
+        }
+        if (this.$route.query.organization) {
+          const area = this.orgMap[this.$route.query.organization]
+          if (area) this.handleAreaFilter(area)
         }
         // Open modal if URL has a job slug
         this.handleRouteNavigation()

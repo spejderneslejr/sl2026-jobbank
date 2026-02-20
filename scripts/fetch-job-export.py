@@ -172,6 +172,58 @@ class JobExportFetcher:
 
         print(f"Built lookup for {len(self.org_lookup)} organizations")
 
+    def build_org_map(self):
+        """Build a mapping from every org ID to its top-level area (short) name.
+
+        This allows ?organization=nnn redirects from the old site to filter
+        to the correct area, regardless of whether nnn is an area, committee,
+        team, or workgroup.
+
+        Path structure (from parent_path):
+          "1/"           -> root (skip)
+          "1/2/"         -> camp level (skip)
+          "1/2/9/"       -> area level  (ID 9 maps to itself)
+          "1/2/9/27/"    -> committee   (ID 27 maps to area 9)
+          "1/2/9/27/28/" -> team        (ID 28 maps to area 9)
+
+        Returns: dict {org_id_str: area_short_name}
+        """
+        # Build reverse lookup: org_id -> full_name
+        org_id_to_name = {}
+        for name, path in self.org_lookup.items():
+            org_id = self.extract_org_id_from_path(path)
+            if org_id:
+                org_id_to_name[org_id] = name
+
+        org_map = {}
+
+        for name, path in self.org_lookup.items():
+            if not path:
+                continue
+
+            own_id = self.extract_org_id_from_path(path)
+            if not own_id:
+                continue
+
+            # Strip the two fixed top levels: 1 (Spejderne root) and 2 (SL2026)
+            parts = path.rstrip('/').split('/')
+            if len(parts) < 3:
+                # Root or camp level — no area to map to
+                continue
+            parts = parts[2:]  # Now: [area_id, ...] or [area_id, committee_id, ...]
+
+            area_id = parts[0]
+            area_full_name = org_id_to_name.get(area_id)
+            if not area_full_name:
+                continue
+
+            _, area_short_name = self.clean_org_name(area_full_name)
+            if area_short_name:
+                org_map[own_id] = area_short_name
+
+        print(f"Built org_map for {len(org_map)} org IDs")
+        return org_map
+
     def get_org_hierarchy_for_job(self, org_name):
         """Get full organizational hierarchy for a job
 
@@ -327,15 +379,26 @@ class JobExportFetcher:
         print(f"Processed {len(jobs)} jobs")
         return jobs
 
-    def write_output(self, jobs):
-        """Write jobs data to JSON file"""
+    def write_output(self, jobs, org_map):
+        """Write jobs and org_map to JSON file
+
+        Output format: {"jobs": [...], "org_map": {"9": "Infrastruktur & Beredskab (IB)", ...}}
+
+        org_map allows the Vue app to resolve ?organization=nnn (used by the old
+        CampOS site) to the correct top-level area filter.
+        """
         output_path = Path(self.output_file)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(jobs, f, ensure_ascii=False, indent=2)
+        output_data = {
+            "jobs": jobs,
+            "org_map": org_map,
+        }
 
-        print(f"Wrote {len(jobs)} jobs to {self.output_file}")
+        with open(output_path, 'w', encoding='utf-8') as f:
+            json.dump(output_data, f, ensure_ascii=False, indent=2)
+
+        print(f"Wrote {len(jobs)} jobs and {len(org_map)} org mappings to {self.output_file}")
 
     def run(self):
         """Main execution flow"""
@@ -354,6 +417,9 @@ class JobExportFetcher:
         # Build organization lookup
         self.build_org_lookup(org_data)
 
+        # Build org ID -> area name map (for ?organization=nnn URL support)
+        org_map = self.build_org_map()
+
         # Fetch job data
         print("\nFetching job data...")
         job_data = self.fetch_json(self.config['job_export_url'])
@@ -363,7 +429,7 @@ class JobExportFetcher:
         jobs = self.process_jobs(job_data)
 
         # Write output
-        self.write_output(jobs)
+        self.write_output(jobs, org_map)
 
         print("\n" + "=" * 60)
         print("Export complete!")
