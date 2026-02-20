@@ -1,18 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { createRouter, createMemoryHistory } from 'vue-router'
 
-// Vue Router requires routes to have a component (or redirect/children) to
-// resolve successfully. Without one the router falls through to the catch-all
-// on every navigation, causing an infinite redirect loop. We use a minimal
-// stub component here — the production app is fine because App.vue doesn't
-// use <router-view> at all, but the router still needs it during navigation.
-const Stub = { template: '<div/>' }
+// Mirror the production EmptyView — render: () => null means no DOM output,
+// which is correct since App.vue owns all rendering (no <router-view> used).
+const EmptyView = { render: () => null }
 
-// Mirror the production route table exactly, adding Stub where the real app
-// has no component so that the router can settle on a matched route.
 const routes = [
-  { path: '/', component: Stub },
-  { path: '/detail/:slug', component: Stub },
+  { path: '/', component: EmptyView },
+  { path: '/detail/:slug', component: EmptyView },
   { path: '/en_GB', redirect: to => ({ path: '/', query: to.query }) },
   { path: '/en_GB/', redirect: to => ({ path: '/', query: to.query }) },
   { path: '/en_GB/detail/:slug', redirect: to => ({ path: `/detail/${to.params.slug}`, query: to.query }) },
