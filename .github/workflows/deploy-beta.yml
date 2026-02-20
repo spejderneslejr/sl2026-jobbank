@@ -17,12 +17,9 @@ jobs:
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_SSH_KEY_BETA }}" > ~/.ssh/deploy_key
+          printf '%s' "${{ secrets.DEPLOY_SSH_KEY_BETA }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H ${{ secrets.DEPLOY_HOST_BETA }} >> ~/.ssh/known_hosts
-        env:
-          DEPLOY_SSH_KEY_BETA: ${{ secrets.DEPLOY_SSH_KEY_BETA }}
-          DEPLOY_HOST_BETA: ${{ secrets.DEPLOY_HOST_BETA }}
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST_BETA }}" >> ~/.ssh/known_hosts
 
       - name: Deploy
         run: bash deploy/deploy.sh
