@@ -61,6 +61,14 @@ This creates an optimized production build in the `dist/` directory.
 npm run preview
 ```
 
+### Running Tests
+
+```bash
+npm test
+```
+
+Tests use [Vitest](https://vitest.dev/) and run without a browser or dev server. Currently covers router redirect rules (`src/router/index.test.js`).
+
 ## Data Management
 
 Job data is loaded from `/jobs-export.json` at runtime. This file is managed by a server-side cron job that exports from Odoo and is **not** part of the deployment — it lives on the server independently.
