@@ -141,8 +141,8 @@ class JobExportFetcher:
         if not org_name:
             return None, None
 
-        # Match pattern: "5532 - GRAS" or just "GRAS"
-        match = re.match(r'^(\d+)\s*-\s*(.+)$', org_name)
+        # Match pattern: "5532 - GRAS", "0050 Korpsansatte", or just "GRAS"
+        match = re.match(r'^(\d+)\s*(?:-\s*)?(.+)$', org_name)
         if match:
             clean_name = match.group(2).strip()
             # Apply overrides after cleaning
