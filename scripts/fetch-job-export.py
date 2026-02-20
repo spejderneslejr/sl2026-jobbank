@@ -17,9 +17,11 @@ Usage:
     python3 scripts/fetch-job-export.py
 """
 
+import html as html_module
 import json
 import os
 import re
+import shutil
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -400,6 +402,94 @@ class JobExportFetcher:
 
         print(f"Wrote {len(jobs)} jobs and {len(org_map)} org mappings to {self.output_file}")
 
+    def build_job_slug(self, job):
+        """Build a URL-friendly slug from job name + id (mirrors JS buildJobSlug in App.vue)"""
+        name = (job.get('name', '') or '').lower()
+        for old, new in [('æ', 'ae'), ('ø', 'oe'), ('å', 'aa'), ('é', 'e')]:
+            name = name.replace(old, new)
+        name = re.sub(r'[\u2011\u2013\u2014]', '-', name)  # en/em-dash variants
+        name = re.sub(r'[^a-z0-9-]+', '-', name)
+        name = re.sub(r'-{2,}', '-', name)
+        name = name.strip('-')
+        job_id = job.get('id')
+        return f"{name}-{job_id}" if name else str(job_id)
+
+    def strip_html_tags(self, text):
+        """Strip HTML tags from text"""
+        return re.sub(r'<[^>]+>', '', text or '').strip()
+
+    def generate_og_pages(self, jobs, output_dir):
+        """Generate per-job OG HTML pages alongside index.html.
+
+        Reads the deployed index.html from output_dir, injects per-job OG meta
+        tags, and writes {output_dir}/job/{slug}/index.html for each job.
+
+        Skips silently if index.html is not present (e.g. local dev where
+        output_dir is public/ and no build has run).
+        """
+        index_path = Path(output_dir) / 'index.html'
+        if not index_path.exists():
+            print("Skipping OG page generation: index.html not found in output directory")
+            return
+
+        base_html = index_path.read_text(encoding='utf-8')
+
+        # Use the title already baked into the deployed index.html
+        title_match = re.search(r'<title>([^<]*)</title>', base_html)
+        site_title = title_match.group(1) if title_match else 'Jobbank - Spejdernes Lejr 2026'
+
+        site_url = os.getenv('SITE_URL', 'https://jobs.spejderneslejr.dk').rstrip('/')
+        og_image_url = f"{site_url}/og-jobbank.jpg"
+
+        job_dir = Path(output_dir) / 'job'
+        job_dir.mkdir(exist_ok=True)
+
+        generated_slugs = set()
+
+        for job in jobs:
+            slug = self.build_job_slug(job)
+            generated_slugs.add(slug)
+
+            job_name = html_module.escape(job.get('name', ''))
+            teaser = html_module.escape(self.strip_html_tags(job.get('teaser', ''))[:300])
+            canonical_url = f"{site_url}/job/{slug}"
+
+            # Replace <title> with job-specific title
+            page_html = re.sub(
+                r'<title>[^<]*</title>',
+                f'<title>{job_name} — {html_module.escape(site_title)}</title>',
+                base_html,
+            )
+
+            og_meta = (
+                f'  <meta property="og:type" content="website" />\n'
+                f'  <meta property="og:site_name" content="{html_module.escape(site_title)}" />\n'
+                f'  <meta property="og:title" content="{job_name}" />\n'
+                f'  <meta property="og:description" content="{teaser}" />\n'
+                f'  <meta property="og:url" content="{canonical_url}" />\n'
+                f'  <meta property="og:image" content="{og_image_url}" />\n'
+                f'  <meta name="twitter:card" content="summary_large_image" />\n'
+                f'  <meta name="twitter:title" content="{job_name}" />\n'
+                f'  <meta name="twitter:description" content="{teaser}" />\n'
+                f'  <meta name="description" content="{teaser}" />\n'
+            )
+            page_html = page_html.replace('</head>', og_meta + '</head>', 1)
+
+            slug_dir = job_dir / slug
+            slug_dir.mkdir(exist_ok=True)
+            (slug_dir / 'index.html').write_text(page_html, encoding='utf-8')
+
+        print(f"Generated {len(generated_slugs)} OG pages in {job_dir}")
+
+        # Remove OG pages for jobs no longer in the export
+        stale_count = 0
+        for existing_dir in job_dir.iterdir():
+            if existing_dir.is_dir() and existing_dir.name not in generated_slugs:
+                shutil.rmtree(existing_dir)
+                stale_count += 1
+        if stale_count:
+            print(f"Cleaned up {stale_count} stale OG page(s)")
+
     def run(self):
         """Main execution flow"""
         print("=" * 60)
@@ -430,6 +520,9 @@ class JobExportFetcher:
 
         # Write output
         self.write_output(jobs, org_map)
+
+        # Generate per-job OG HTML pages (only when index.html is present)
+        self.generate_og_pages(jobs, str(Path(self.output_file).parent))
 
         print("\n" + "=" * 60)
         print("Export complete!")
