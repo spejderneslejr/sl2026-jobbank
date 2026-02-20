@@ -20,6 +20,8 @@
     <JobFilter
       :areas="availableAreas"
       :result-count="filteredJobs.length"
+      :initial-search="initialSearch"
+      :initial-area="initialArea"
       @search="handleSearch"
       @area-filter="handleAreaFilter"
       @sort-change="handleSortChange"
@@ -62,6 +64,7 @@ export default {
       selectedArea: '',
       sortField: null,
       sortDirection: null,
+      orgMap: {},
     }
   },
   computed: {
@@ -71,6 +74,22 @@ export default {
         .map((job) => job.org_hierarchy?.area)
         .filter(Boolean)
       return [...new Set(areas)].sort()
+    },
+    initialSearch() {
+      return this.$route.query.search || ''
+    },
+    initialArea() {
+      if (this.$route.query.organization) {
+        return this.orgMap[this.$route.query.organization] || ''
+      }
+      return ''
+    },
+  },
+  watch: {
+    '$route'() {
+      if (this.allJobs.length > 0) {
+        this.handleRouteNavigation()
+      }
     },
   },
   methods: {
@@ -82,24 +101,35 @@ export default {
     async fetchJobs() {
       try {
         // Try to load from public jobs-export.json (production data)
-        const response = await fetch('./jobs-export.json')
+        const response = await fetch('/jobs-export.json')
 
         if (!response.ok) {
           throw new Error('Failed to fetch jobs-export.json')
         }
 
-        const jobs = await response.json()
+        const data = await response.json()
+        const jobs = data.jobs
+        this.orgMap = data.org_map || {}
 
         // Check if the data is valid (has jobs)
         if (Array.isArray(jobs) && jobs.length > 0) {
           // Apply staffing filter based on configuration
           this.allJobs = applyStaffingFilter(jobs)
           this.filteredJobs = this.allJobs
-      }
+        }
 
-
-        // Check for deep link after loading jobs
-        this.detectDeeplink()
+        // Apply initial filters from URL query params
+        if (this.$route.query.search) {
+          this.handleSearch(this.$route.query.search)
+        }
+        if (this.$route.query.organization) {
+          const area = this.orgMap[this.$route.query.organization]
+          if (area) this.handleAreaFilter(area)
+        }
+        // Open modal if URL has a job slug
+        this.handleRouteNavigation()
+        // Replace legacy redirect URL with canonical form
+        this.cleanupUrl()
       } catch (error) {
         console.error('Error loading jobs from /jobs-export.json:', error)
       }
@@ -179,23 +209,55 @@ export default {
 
       return sorted
     },
+    parseSlugToId(slug) {
+      const asInt = parseInt(slug, 10)
+      if (!isNaN(asInt) && String(asInt) === slug) return asInt
+      const lastHyphen = slug.lastIndexOf('-')
+      if (lastHyphen !== -1) {
+        const id = parseInt(slug.slice(lastHyphen + 1), 10)
+        if (!isNaN(id)) return id
+      }
+      return null
+    },
+    handleRouteNavigation() {
+      const slug = this.$route.params.slug
+      if (slug) {
+        const jobId = this.parseSlugToId(slug)
+        const job = this.allJobs.find(j => j.id === jobId)
+        if (job) {
+          this.selectedJob = job
+          this.isModalVisible = true
+        }
+        // If job not found: silently stay on listing (jobs may still be loading)
+      } else {
+        this.isModalVisible = false
+      }
+    },
+    cleanupUrl() {
+      const slug = this.$route.params.slug
+      const hasQueryParams = Object.keys(this.$route.query).length > 0
+
+      if (slug) {
+        const jobId = this.parseSlugToId(slug)
+        if (jobId === null) return  // Unparseable slug — leave it alone
+        const isAlreadyClean = String(jobId) === slug && !hasQueryParams
+        if (!isAlreadyClean) {
+          this.$router.replace('/detail/' + jobId)
+        }
+      } else if (hasQueryParams) {
+        this.$router.replace('/')
+      }
+      // Otherwise URL is already canonical — no action
+    },
     showModal(job) {
       if (!job) return
       this.selectedJob = job
       this.isModalVisible = true
+      this.$router.push('/detail/' + job.id)
     },
     closeModal() {
       this.isModalVisible = false
-    },
-    detectDeeplink() {
-      // Check if URL has a job ID in the hash
-      if (window.location.hash && window.location.hash.match(/^\#\d+$/)) {
-        const jobId = parseInt(window.location.hash.substring(1))
-        const job = this.allJobs.find((j) => j.id === jobId)
-        if (job) {
-          this.showModal(job)
-        }
-      }
+      this.$router.replace('/')
     },
   },
   mounted() {

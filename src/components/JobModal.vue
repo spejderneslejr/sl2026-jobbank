@@ -181,16 +181,10 @@ export default {
       // Prevent body scroll when modal is open
       if (newVal) {
         document.body.style.overflow = 'hidden'
-        // Add job id to URL hash
-        window.location.hash = this.job.id
         // Add ESC key listener
         window.addEventListener('keydown', this.handleKeydown)
       } else {
         document.body.style.overflow = ''
-        // Clear hash when closing without scrolling
-        if (window.location.hash) {
-          history.replaceState(null, '', window.location.pathname + window.location.search)
-        }
         // Remove ESC key listener
         window.removeEventListener('keydown', this.handleKeydown)
       }
@@ -200,7 +194,6 @@ export default {
     // If modal is visible on mount, setup immediately
     if (this.show) {
       document.body.style.overflow = 'hidden'
-      window.location.hash = this.job.id
       window.addEventListener('keydown', this.handleKeydown)
     }
   },

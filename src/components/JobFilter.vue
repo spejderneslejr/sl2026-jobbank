@@ -8,7 +8,19 @@
           @input="handleSearch"
           placeholder="Søg efter job..."
           class="search-input"
+          :class="{ 'has-value': searchQuery }"
         />
+        <button
+          v-if="searchQuery"
+          type="button"
+          class="search-clear-btn"
+          aria-label="Ryd søgning"
+          @click="clearSearch"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
       </div>
 
       <div class="filter-select">
@@ -87,12 +99,20 @@ export default {
       type: Number,
       required: true,
     },
+    initialSearch: {
+      type: String,
+      default: '',
+    },
+    initialArea: {
+      type: String,
+      default: '',
+    },
   },
   emits: ['search', 'area-filter', 'sort-change'],
   data() {
     return {
-      searchQuery: '',
-      selectedArea: '',
+      searchQuery: this.initialSearch,
+      selectedArea: this.initialArea,
       selectedSort: DEFAULT_SORT.field,
       sortDirection: DEFAULT_SORT.direction,
       sortLabels: SORT_LABELS,
@@ -101,6 +121,10 @@ export default {
   methods: {
     handleSearch() {
       this.$emit('search', this.searchQuery)
+    },
+    clearSearch() {
+      this.searchQuery = ''
+      this.$emit('search', '')
     },
     handleAreaChange() {
       this.$emit('area-filter', this.selectedArea)
@@ -120,6 +144,16 @@ export default {
         field: this.selectedSort,
         direction: this.sortDirection,
       })
+    },
+  },
+  watch: {
+    // initialArea arrives late (after orgMap loads from jobs-export.json),
+    // so we can't rely on data() alone — update the dropdown when it arrives.
+    initialArea(newVal) {
+      if (newVal && !this.selectedArea) {
+        this.selectedArea = newVal
+        this.handleAreaChange()
+      }
     },
   },
   mounted() {
@@ -147,6 +181,7 @@ export default {
 
 .search-box {
   width: 100%;
+  position: relative;
 }
 
 .search-input {
@@ -167,6 +202,33 @@ export default {
 .search-input:focus {
   outline: none;
   border-color: var(--color-primary-green);
+}
+
+.search-input.has-value {
+  padding-right: 40px;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  transition: color var(--transition-fast);
+}
+
+.search-clear-btn:hover {
+  color: var(--color-text-primary);
 }
 
 .filter-select {

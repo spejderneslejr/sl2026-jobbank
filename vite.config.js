@@ -4,7 +4,7 @@ import { unlinkSync, existsSync } from 'fs'
 import { resolve } from 'path'
 
 export default defineConfig({
-  base: './', // Use relative paths - works anywhere
+  base: '/', // Absolute paths required for history-mode routing
   publicDir: 'public',
   plugins: [
     vue(),

@@ -61,6 +61,16 @@ This creates an optimized production build in the `dist/` directory.
 npm run preview
 ```
 
+### Running Tests
+
+```bash
+npm test
+```
+
+Tests use [Vitest](https://vitest.dev/) and run without a browser or dev server. Currently covers:
+- Router redirect rules (`src/router/index.test.js`)
+- URL cleanup after redirect processing (`src/App.cleanupUrl.test.js`) — verifies that legacy URLs like `/?search=brandmand` or `/detail/slug-409` are replaced with their canonical forms (`/`, `/detail/409`) via `router.replace()` so they don't appear in browser history.
+
 ## Data Management
 
 Job data is loaded from `/jobs-export.json` at runtime. This file is managed by a server-side cron job that exports from Odoo and is **not** part of the deployment — it lives on the server independently.
