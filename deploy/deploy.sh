@@ -28,4 +28,9 @@ rsync -avz --delete \
   "$PROJECT_DIR/dist/" \
   "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
 
+echo "Deploying scripts to ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}../scripts/"
+rsync -avz --delete \
+  "$PROJECT_DIR/scripts/" \
+  "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}../scripts/"
+
 echo "Deploy complete."
