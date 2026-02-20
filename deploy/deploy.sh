@@ -25,11 +25,13 @@ printf '{"sha":"%s","short_sha":"%s","tags":%s,"deployed_at":"%s"}\n' \
 echo "Deploying to ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
 rsync -avz --delete \
   --exclude='jobs-export.json' \
+  --exclude='job/' \
   "$PROJECT_DIR/dist/" \
   "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
 
 echo "Deploying scripts to ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}../scripts/"
 rsync -avz --delete \
+  --exclude='config.json' \
   "$PROJECT_DIR/scripts/" \
   "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}../scripts/"
 
