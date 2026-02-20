@@ -128,6 +128,8 @@ export default {
         }
         // Open modal if URL has a job slug
         this.handleRouteNavigation()
+        // Replace legacy redirect URL with canonical form
+        this.cleanupUrl()
       } catch (error) {
         console.error('Error loading jobs from /jobs-export.json:', error)
       }
@@ -230,6 +232,22 @@ export default {
       } else {
         this.isModalVisible = false
       }
+    },
+    cleanupUrl() {
+      const slug = this.$route.params.slug
+      const hasQueryParams = Object.keys(this.$route.query).length > 0
+
+      if (slug) {
+        const jobId = this.parseSlugToId(slug)
+        if (jobId === null) return  // Unparseable slug — leave it alone
+        const isAlreadyClean = String(jobId) === slug && !hasQueryParams
+        if (!isAlreadyClean) {
+          this.$router.replace('/detail/' + jobId)
+        }
+      } else if (hasQueryParams) {
+        this.$router.replace('/')
+      }
+      // Otherwise URL is already canonical — no action
     },
     showModal(job) {
       if (!job) return
