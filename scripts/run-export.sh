@@ -9,6 +9,13 @@
 #   1. Build the Docker image (if needed)
 #   2. Run the container with a bind mount to the specified output directory
 #   3. Generate jobs-export.json in the output directory
+#   4. Generate per-job OG HTML pages in {output}/job/ (requires index.html to
+#      be present in the output directory, i.e. the site has been deployed)
+#
+# Environment variables:
+#   SITE_URL   Base URL used in OG page meta tags (default: https://jobs.spejderneslejr.dk)
+#              Override for local testing, e.g.:
+#                SITE_URL=http://localhost:5173 ./run-export.sh ./dist
 #
 
 set -e
@@ -50,11 +57,14 @@ fi
 # Docker image name
 IMAGE_NAME="sl2026-job-export"
 
+SITE_URL="${SITE_URL:-https://jobs.spejderneslejr.dk}"
+
 echo "=================================="
 echo "SL2026 Job Export Runner"
 echo "=================================="
 echo "Output directory: $OUTPUT_DIR"
 echo "Script directory: $SCRIPT_DIR"
+echo "Site URL:         $SITE_URL"
 echo ""
 
 # Build the Docker image
@@ -66,10 +76,12 @@ echo ""
 echo "Running export..."
 docker run --rm \
     -v "$OUTPUT_DIR:/output" \
+    -e SITE_URL="$SITE_URL" \
     "$IMAGE_NAME"
 
 echo ""
 echo "=================================="
 echo "Export complete!"
 echo "=================================="
-echo "Output file: $OUTPUT_DIR/jobs-export.json"
+echo "Output file:  $OUTPUT_DIR/jobs-export.json"
+echo "OG pages:     $OUTPUT_DIR/job/ (if index.html was present)"

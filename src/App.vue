@@ -60,6 +60,7 @@ export default {
       filteredJobs: [],
       selectedJob: null,
       isModalVisible: false,
+      defaultTitle: '',
       searchQuery: '',
       selectedArea: '',
       sortField: null,
@@ -209,6 +210,16 @@ export default {
 
       return sorted
     },
+    buildJobSlug(job) {
+      const name = (job.name || '')
+        .toLowerCase()
+        .replace(/[æÆ]/g, 'ae').replace(/[øØ]/g, 'oe').replace(/[åÅ]/g, 'aa').replace(/é/g, 'e')
+        .replace(/[\u2011\u2013\u2014]/g, '-')  // non-breaking hyphen, en-dash, em-dash → hyphen
+        .replace(/[^a-z0-9-]+/g, '-')           // everything else → hyphen
+        .replace(/-{2,}/g, '-')                 // collapse runs of hyphens
+        .replace(/^-+|-+$/g, '')               // trim leading/trailing
+      return name ? `${name}-${job.id}` : String(job.id)
+    },
     parseSlugToId(slug) {
       const asInt = parseInt(slug, 10)
       if (!isNaN(asInt) && String(asInt) === slug) return asInt
@@ -239,10 +250,13 @@ export default {
 
       if (slug) {
         const jobId = this.parseSlugToId(slug)
-        if (jobId === null) return  // Unparseable slug — leave it alone
-        const isAlreadyClean = String(jobId) === slug && !hasQueryParams
+        if (jobId === null) return                                // unparseable — leave it
+        const job = this.allJobs.find(j => j.id === jobId)
+        if (!job) return                                          // unknown job — leave it
+        const canonical = this.buildJobSlug(job)
+        const isAlreadyClean = slug === canonical && !hasQueryParams
         if (!isAlreadyClean) {
-          this.$router.replace('/detail/' + jobId)
+          this.$router.replace('/job/' + canonical)
         }
       } else if (hasQueryParams) {
         this.$router.replace('/')
@@ -253,14 +267,17 @@ export default {
       if (!job) return
       this.selectedJob = job
       this.isModalVisible = true
-      this.$router.push('/detail/' + job.id)
+      this.$router.push('/job/' + this.buildJobSlug(job))
+      document.title = `${job.name} — ${this.defaultTitle}`
     },
     closeModal() {
       this.isModalVisible = false
       this.$router.replace('/')
+      document.title = this.defaultTitle
     },
   },
   mounted() {
+    this.defaultTitle = document.title
     this.initializeTheme()
     this.fetchJobs()
   },
