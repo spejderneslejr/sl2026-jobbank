@@ -20,6 +20,7 @@
     <JobFilter
       :areas="availableAreas"
       :result-count="filteredJobs.length"
+      :initial-search="initialSearch"
       @search="handleSearch"
       @area-filter="handleAreaFilter"
       @sort-change="handleSortChange"
@@ -72,6 +73,16 @@ export default {
         .filter(Boolean)
       return [...new Set(areas)].sort()
     },
+    initialSearch() {
+      return this.$route.query.search || ''
+    },
+  },
+  watch: {
+    '$route'() {
+      if (this.allJobs.length > 0) {
+        this.handleRouteNavigation()
+      }
+    },
   },
   methods: {
     initializeTheme() {
@@ -82,7 +93,7 @@ export default {
     async fetchJobs() {
       try {
         // Try to load from public jobs-export.json (production data)
-        const response = await fetch('./jobs-export.json')
+        const response = await fetch('/jobs-export.json')
 
         if (!response.ok) {
           throw new Error('Failed to fetch jobs-export.json')
@@ -98,8 +109,12 @@ export default {
       }
 
 
-        // Check for deep link after loading jobs
-        this.detectDeeplink()
+        // Apply initial search query from URL
+        if (this.$route.query.search) {
+          this.handleSearch(this.$route.query.search)
+        }
+        // Open modal if URL has a job slug
+        this.handleRouteNavigation()
       } catch (error) {
         console.error('Error loading jobs from /jobs-export.json:', error)
       }
@@ -179,23 +194,39 @@ export default {
 
       return sorted
     },
+    parseSlugToId(slug) {
+      const asInt = parseInt(slug, 10)
+      if (!isNaN(asInt) && String(asInt) === slug) return asInt
+      const lastHyphen = slug.lastIndexOf('-')
+      if (lastHyphen !== -1) {
+        const id = parseInt(slug.slice(lastHyphen + 1), 10)
+        if (!isNaN(id)) return id
+      }
+      return null
+    },
+    handleRouteNavigation() {
+      const slug = this.$route.params.slug
+      if (slug) {
+        const jobId = this.parseSlugToId(slug)
+        const job = this.allJobs.find(j => j.id === jobId)
+        if (job) {
+          this.selectedJob = job
+          this.isModalVisible = true
+        }
+        // If job not found: silently stay on listing (jobs may still be loading)
+      } else {
+        this.isModalVisible = false
+      }
+    },
     showModal(job) {
       if (!job) return
       this.selectedJob = job
       this.isModalVisible = true
+      this.$router.push('/detail/' + job.id)
     },
     closeModal() {
       this.isModalVisible = false
-    },
-    detectDeeplink() {
-      // Check if URL has a job ID in the hash
-      if (window.location.hash && window.location.hash.match(/^\#\d+$/)) {
-        const jobId = parseInt(window.location.hash.substring(1))
-        const job = this.allJobs.find((j) => j.id === jobId)
-        if (job) {
-          this.showModal(job)
-        }
-      }
+      this.$router.replace('/')
     },
   },
   mounted() {

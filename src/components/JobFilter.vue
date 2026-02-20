@@ -87,11 +87,15 @@ export default {
       type: Number,
       required: true,
     },
+    initialSearch: {
+      type: String,
+      default: '',
+    },
   },
   emits: ['search', 'area-filter', 'sort-change'],
   data() {
     return {
-      searchQuery: '',
+      searchQuery: this.initialSearch,
       selectedArea: '',
       selectedSort: DEFAULT_SORT.field,
       sortDirection: DEFAULT_SORT.direction,
