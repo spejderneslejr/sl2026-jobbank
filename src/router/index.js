@@ -13,6 +13,9 @@ const routes = [
   { path: '/en_GB', redirect: to => ({ path: '/', query: to.query }) },
   { path: '/en_GB/', redirect: to => ({ path: '/', query: to.query }) },
   { path: '/en_GB/detail/:slug', redirect: to => ({ path: `/detail/${to.params.slug}`, query: to.query }) },
+  { path: '/da_DK', redirect: to => ({ path: '/', query: to.query }) },
+  { path: '/da_DK/', redirect: to => ({ path: '/', query: to.query }) },
+  { path: '/da_DK/detail/:slug', redirect: to => ({ path: `/detail/${to.params.slug}`, query: to.query }) },
   // Catch-all: redirect unknown paths to the listing, preserving query params
   { path: '/:pathMatch(.*)*', redirect: to => ({ path: '/', query: to.query }) },
 ]

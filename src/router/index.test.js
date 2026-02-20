@@ -11,6 +11,9 @@ const routes = [
   { path: '/en_GB', redirect: to => ({ path: '/', query: to.query }) },
   { path: '/en_GB/', redirect: to => ({ path: '/', query: to.query }) },
   { path: '/en_GB/detail/:slug', redirect: to => ({ path: `/detail/${to.params.slug}`, query: to.query }) },
+  { path: '/da_DK', redirect: to => ({ path: '/', query: to.query }) },
+  { path: '/da_DK/', redirect: to => ({ path: '/', query: to.query }) },
+  { path: '/da_DK/detail/:slug', redirect: to => ({ path: `/detail/${to.params.slug}`, query: to.query }) },
   { path: '/:pathMatch(.*)*', redirect: to => ({ path: '/', query: to.query }) },
 ]
 
@@ -79,6 +82,40 @@ describe('router redirects', () => {
 
     it('/en_GB/detail/slug-409?organization=7 redirects to /detail/slug-409 and preserves organization param', async () => {
       const route = await navigate(router, '/en_GB/detail/slug-409?organization=7')
+      expect(route.path).toBe('/detail/slug-409')
+      expect(route.query.organization).toBe('7')
+    })
+  })
+
+  describe('da_DK redirects', () => {
+    it('/da_DK redirects to /', async () => {
+      const route = await navigate(router, '/da_DK')
+      expect(route.path).toBe('/')
+    })
+
+    it('/da_DK/ redirects to /', async () => {
+      const route = await navigate(router, '/da_DK/')
+      expect(route.path).toBe('/')
+    })
+
+    it('/da_DK/detail/409 redirects to /detail/409', async () => {
+      const route = await navigate(router, '/da_DK/detail/409')
+      expect(route.path).toBe('/detail/409')
+    })
+
+    it('/da_DK/detail/slug-409 redirects to /detail/slug-409', async () => {
+      const route = await navigate(router, '/da_DK/detail/slug-409')
+      expect(route.path).toBe('/detail/slug-409')
+    })
+
+    it('/da_DK/?organization=7 redirects to / and preserves organization param', async () => {
+      const route = await navigate(router, '/da_DK/?organization=7')
+      expect(route.path).toBe('/')
+      expect(route.query.organization).toBe('7')
+    })
+
+    it('/da_DK/detail/slug-409?organization=7 redirects to /detail/slug-409 and preserves organization param', async () => {
+      const route = await navigate(router, '/da_DK/detail/slug-409?organization=7')
       expect(route.path).toBe('/detail/slug-409')
       expect(route.query.organization).toBe('7')
     })
