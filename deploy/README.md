@@ -39,6 +39,9 @@ Pushes to `main` trigger a GitHub Actions workflow (`.github/workflows/deploy.ym
 | `DEPLOY_SSH_KEY` | Private SSH key for the deploy user |
 | `DEPLOY_HOST` | Server hostname |
 | `DEPLOY_USER` | SSH username on the server |
+| `DEPLOY_PATH` | Destination path on the server |
+
+For the beta environment, the same secrets are used with a `_BETA` suffix: `DEPLOY_SSH_KEY_BETA`, `DEPLOY_HOST_BETA`, `DEPLOY_USER_BETA`, `DEPLOY_PATH_BETA`.
 
 ## Manual deployment
 
