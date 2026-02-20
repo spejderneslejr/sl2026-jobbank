@@ -31,3 +31,4 @@ jobs:
           DEPLOY_USER: ${{ secrets.DEPLOY_USER_BETA }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH_BETA }}
           RSYNC_RSH: "ssh -i ~/.ssh/deploy_key"
+          VITE_APP_TITLE: "Jobbank - BETA"
