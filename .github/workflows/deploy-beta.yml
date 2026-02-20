@@ -1,0 +1,32 @@
+name: Deploy to beta
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s' "${{ secrets.DEPLOY_SSH_KEY_BETA }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST_BETA }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        run: bash deploy/deploy.sh
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST_BETA }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER_BETA }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH_BETA }}
+          RSYNC_RSH: "ssh -i ~/.ssh/deploy_key"
+          VITE_APP_TITLE: "Jobbank - BETA - Spejdernes Lejr 2026"
+          VITE_APP_HEADER: "Jobbank - BETA"

@@ -4,7 +4,7 @@
       <div class="header-left">
         <img :src="logoSrc" alt="Spejdernes Lejr 2026" class="camp-logo" />
         <div class="site-title-container">
-          <h1 class="site-title">Jobbank</h1>
+          <h1 class="site-title">{{ appHeader }}</h1>
         </div>
       </div>
       <ThemeToggle />
@@ -23,6 +23,7 @@ export default {
   data() {
     return {
       logoSrc: './sl2026-camp-logo.svg',
+      appHeader: import.meta.env.VITE_APP_HEADER || 'Jobbank',
     }
   },
   mounted() {
