@@ -13,10 +13,10 @@ const Stub = { template: '<div/>' }
 const routes = [
   { path: '/', component: Stub },
   { path: '/detail/:slug', component: Stub },
-  { path: '/en_GB', redirect: '/' },
-  { path: '/en_GB/', redirect: '/' },
-  { path: '/en_GB/detail/:slug', redirect: to => `/detail/${to.params.slug}` },
-  { path: '/:pathMatch(.*)*', redirect: '/' },
+  { path: '/en_GB', redirect: to => ({ path: '/', query: to.query }) },
+  { path: '/en_GB/', redirect: to => ({ path: '/', query: to.query }) },
+  { path: '/en_GB/detail/:slug', redirect: to => ({ path: `/detail/${to.params.slug}`, query: to.query }) },
+  { path: '/:pathMatch(.*)*', redirect: to => ({ path: '/', query: to.query }) },
 ]
 
 function makeRouter() {
@@ -75,6 +75,18 @@ describe('router redirects', () => {
       const route = await navigate(router, '/en_GB/detail/slug-409')
       expect(route.path).toBe('/detail/slug-409')
     })
+
+    it('/en_GB/?organization=7 redirects to / and preserves organization param', async () => {
+      const route = await navigate(router, '/en_GB/?organization=7')
+      expect(route.path).toBe('/')
+      expect(route.query.organization).toBe('7')
+    })
+
+    it('/en_GB/detail/slug-409?organization=7 redirects to /detail/slug-409 and preserves organization param', async () => {
+      const route = await navigate(router, '/en_GB/detail/slug-409?organization=7')
+      expect(route.path).toBe('/detail/slug-409')
+      expect(route.query.organization).toBe('7')
+    })
   })
 
   describe('catch-all redirects unknown paths to /', () => {
@@ -87,15 +99,21 @@ describe('router redirects', () => {
       const route = await navigate(router, '/jobs/detail/409')
       expect(route.path).toBe('/')
     })
+
+    it('/unknown-path?organization=7 redirects to / and preserves organization param', async () => {
+      const route = await navigate(router, '/unknown-path?organization=7')
+      expect(route.path).toBe('/')
+      expect(route.query.organization).toBe('7')
+    })
   })
 
-  describe('query params are preserved', () => {
+  describe('query params are preserved on normal routes', () => {
     it('/?search=brandmand keeps search param', async () => {
       const route = await navigate(router, '/?search=brandmand')
       expect(route.query.search).toBe('brandmand')
     })
 
-    it('/?organization=7 keeps organization param (ignored by app, but not dropped by router)', async () => {
+    it('/?organization=7 keeps organization param', async () => {
       const route = await navigate(router, '/?organization=7')
       expect(route.query.organization).toBe('7')
     })
