@@ -178,16 +178,20 @@ export default {
   },
   watch: {
     show(newVal) {
+      // Prevent body scroll when modal is open
       if (newVal) {
         document.body.style.overflow = 'hidden'
+        // Add ESC key listener
         window.addEventListener('keydown', this.handleKeydown)
       } else {
         document.body.style.overflow = ''
+        // Remove ESC key listener
         window.removeEventListener('keydown', this.handleKeydown)
       }
     },
   },
   mounted() {
+    // If modal is visible on mount, setup immediately
     if (this.show) {
       document.body.style.overflow = 'hidden'
       window.addEventListener('keydown', this.handleKeydown)
