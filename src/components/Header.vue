@@ -13,17 +13,17 @@
 </template>
 
 <script>
-import ThemeToggle from "./ThemeToggle.vue";
+import ThemeToggle from './ThemeToggle.vue';
 
 export default {
-  name: "Header",
+  name: 'Header',
   components: {
     ThemeToggle,
   },
   data() {
     return {
-      logoSrc: "/sl2026-camp-logo.svg",
-      appHeader: import.meta.env.VITE_APP_HEADER || "Jobbank",
+      logoSrc: '/sl2026-camp-logo.svg',
+      appHeader: import.meta.env.VITE_APP_HEADER || 'Jobbank',
     };
   },
   mounted() {
@@ -34,16 +34,16 @@ export default {
     });
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["data-theme"],
+      attributeFilter: ['data-theme'],
     });
   },
   methods: {
     updateLogo() {
-      const theme = document.documentElement.getAttribute("data-theme");
+      const theme = document.documentElement.getAttribute('data-theme');
       this.logoSrc =
-        theme === "dark"
-          ? "/sl2026-camp-logo-positive.svg"
-          : "/sl2026-camp-logo.svg";
+        theme === 'dark'
+          ? '/sl2026-camp-logo-positive.svg'
+          : '/sl2026-camp-logo.svg';
     },
   },
 };
