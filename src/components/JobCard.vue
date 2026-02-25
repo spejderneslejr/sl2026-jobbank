@@ -4,7 +4,7 @@
       <h3 class="job-title">{{ job.name }}</h3>
       <span class="job-area">{{ job.org_hierarchy?.area || 'Unknown' }}</span>
     </div>
-    <p class="job-teaser">{{ job.teaser }}</p>
+    <p class="job-teaser" :title="job.teaser">{{ job.teaser }}</p>
     <div class="job-footer">
       <span class="job-recruitment">
         {{ job.no_of_hired_employee }} / {{ job.no_of_recruitment }} rekrutteret
@@ -26,7 +26,7 @@ export default {
     },
   },
   emits: ['show-modal'],
-}
+};
 </script>
 
 <style scoped>
@@ -38,6 +38,8 @@ export default {
   cursor: pointer;
   transition: all var(--transition-normal);
   box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
 }
 
 .job-card:hover {
@@ -80,7 +82,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: var(--spacing-lg);
+  margin-top: auto;
   padding-top: var(--spacing-lg);
   border-top: 1px solid var(--color-border-light);
 }

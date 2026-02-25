@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import ThemeToggle from './ThemeToggle.vue'
+import ThemeToggle from './ThemeToggle.vue';
 
 export default {
   name: 'Header',
@@ -22,30 +22,31 @@ export default {
   },
   data() {
     return {
-      logoSrc: './sl2026-camp-logo.svg',
+      logoSrc: '/sl2026-camp-logo.svg',
       appHeader: import.meta.env.VITE_APP_HEADER || 'Jobbank',
-    }
+    };
   },
   mounted() {
-    this.updateLogo()
+    this.updateLogo();
     // Listen for theme changes
     const observer = new MutationObserver(() => {
-      this.updateLogo()
-    })
+      this.updateLogo();
+    });
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['data-theme'],
-    })
+    });
   },
   methods: {
     updateLogo() {
-      const theme = document.documentElement.getAttribute('data-theme')
-      this.logoSrc = theme === 'dark'
-        ? './sl2026-camp-logo-positive.svg'
-        : './sl2026-camp-logo.svg'
+      const theme = document.documentElement.getAttribute('data-theme');
+      this.logoSrc =
+        theme === 'dark'
+          ? '/sl2026-camp-logo-positive.svg'
+          : '/sl2026-camp-logo.svg';
     },
   },
-}
+};
 </script>
 
 <style scoped>
