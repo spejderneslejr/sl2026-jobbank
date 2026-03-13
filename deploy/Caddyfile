@@ -1,5 +1,14 @@
+http://job.spejderneslejr.dk {
+	redir https://jobs.spejderneslejr.dk{uri} permanent
+}
+
 :80 {
 	root * /srv
 	try_files {path} {path}/ /index.html
 	file_server
+
+	log {
+		output file /var/log/caddy/access.log
+		format json
+	}
 }
