@@ -8,6 +8,7 @@ const EmptyView = { render: () => null }
 const routes = [
   { path: '/', component: EmptyView },
   { path: '/job/:slug', component: EmptyView },                                          // canonical
+  { path: '/:id(\\d+)', redirect: to => ({ path: `/job/${to.params.id}` }) },           // bare numeric id → job
   { path: '/detail/:slug', redirect: to => ({ path: `/job/${to.params.slug}` }) },      // backward compat
   { path: '/en_GB', redirect: to => ({ path: '/', query: to.query }) },
   { path: '/en_GB/', redirect: to => ({ path: '/', query: to.query }) },
@@ -53,6 +54,18 @@ describe('router redirects', () => {
       const route = await navigate(router, '/job/konsulent-i-bredygtighedsudvalget-409')
       expect(route.path).toBe('/job/konsulent-i-bredygtighedsudvalget-409')
       expect(route.params.slug).toBe('konsulent-i-bredygtighedsudvalget-409')
+    })
+  })
+
+  describe('bare numeric id redirects', () => {
+    it('/375 redirects to /job/375', async () => {
+      const route = await navigate(router, '/375')
+      expect(route.path).toBe('/job/375')
+    })
+
+    it('/409 redirects to /job/409', async () => {
+      const route = await navigate(router, '/409')
+      expect(route.path).toBe('/job/409')
     })
   })
 

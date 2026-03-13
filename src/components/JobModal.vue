@@ -28,17 +28,17 @@
       <div class="modal-body">
         <div v-if="job.description" class="content-section">
           <h3>Beskrivelse</h3>
-          <p class="content-text">{{ job.description }}</p>
+          <div class="content-text markdown-body" v-html="renderMarkdown(job.description)"></div>
         </div>
 
         <div v-if="job.description_time_and_scope" class="content-section">
           <h3>Tid og omfang</h3>
-          <p class="content-text">{{ job.description_time_and_scope }}</p>
+          <div class="content-text markdown-body" v-html="renderMarkdown(job.description_time_and_scope)"></div>
         </div>
 
         <div v-if="job.requirements" class="content-section">
           <h3>Særlige krav</h3>
-          <p class="content-text">{{ job.requirements }}</p>
+          <div class="content-text markdown-body" v-html="renderMarkdown(job.requirements)"></div>
         </div>
 
         <div class="content-section">
@@ -95,6 +95,8 @@
 </template>
 
 <script>
+import { marked } from 'marked'
+
 export default {
   name: 'JobModal',
   props: {
@@ -149,6 +151,10 @@ export default {
     },
   },
   methods: {
+    renderMarkdown(text) {
+      if (!text) return ''
+      return marked(text)
+    },
     closeModal() {
       this.$emit('close')
     },
@@ -332,7 +338,6 @@ export default {
 .content-text {
   color: var(--color-text-light);
   line-height: var(--line-height-loose);
-  white-space: pre-line;
   margin: 0;
 }
 
@@ -343,6 +348,44 @@ export default {
 
 .content-text a:hover {
   color: var(--color-primary-green-hover);
+}
+
+.markdown-body :deep(h1),
+.markdown-body :deep(h2),
+.markdown-body :deep(h3),
+.markdown-body :deep(h4),
+.markdown-body :deep(h5) {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: var(--spacing-md) 0 var(--spacing-sm);
+}
+
+.markdown-body :deep(ul),
+.markdown-body :deep(ol) {
+  padding-left: var(--spacing-2xl);
+  margin: var(--spacing-sm) 0;
+}
+
+.markdown-body :deep(li) {
+  margin-bottom: var(--spacing-xs);
+}
+
+.markdown-body :deep(p) {
+  margin: 0 0 var(--spacing-sm);
+}
+
+.markdown-body :deep(a) {
+  color: var(--color-primary-green);
+  text-decoration: underline;
+}
+
+.markdown-body :deep(a:hover) {
+  color: var(--color-primary-green-hover);
+}
+
+.markdown-body :deep(strong) {
+  font-weight: var(--font-weight-semibold);
 }
 
 .progress-bar {

@@ -45,3 +45,8 @@ deploy/*_key
 
 # Deployed site directory
 htdocs/
+
+# Rendered jobs
+job/
+
+.claude
