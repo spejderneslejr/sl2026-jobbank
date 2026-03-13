@@ -9,6 +9,7 @@ const EmptyView = { render: () => null }
 const routes = [
   { path: '/', component: EmptyView },
   { path: '/job/:slug', component: EmptyView },                                          // canonical
+  { path: '/:id(\\d+)', redirect: to => ({ path: `/job/${to.params.id}` }) },           // bare numeric id → job
   { path: '/detail/:slug', redirect: to => ({ path: `/job/${to.params.slug}` }) },      // backward compat (no query — CampOS links won't have jobbank params)
   { path: '/en_GB', redirect: to => ({ path: '/', query: to.query }) },
   { path: '/en_GB/', redirect: to => ({ path: '/', query: to.query }) },
