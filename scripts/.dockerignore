@@ -2,8 +2,7 @@
 *
 
 # Include only required files
-!fetch-job-export.py
+!fetch-job-export.js
+!org-overrides.js
+!package.json
 !config.json
-
-# Note: config.json must exist before building
-# If it doesn't exist, copy from config.example.json

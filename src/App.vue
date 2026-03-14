@@ -158,7 +158,7 @@ export default {
           (job) =>
             (job?.name || '').toLowerCase().includes(searchLower) ||
             (job?.teaser || '').toLowerCase().includes(searchLower) ||
-            (job?.description ||'').toLowerCase().includes(searchLower) ||
+            (job?.description || '').toLowerCase().includes(searchLower) ||
             (job.org_hierarchy?.area || '').toLowerCase().includes(searchLower)
         )
       }

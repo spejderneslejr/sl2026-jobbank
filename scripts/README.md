@@ -2,7 +2,7 @@
 
 This directory contains the production script for fetching job data from the CampOS API.
 
-## fetch-job-export.py
+## fetch-job-export.js
 
 ## Running with Docker (Recommended for Servers)
 
@@ -31,7 +31,7 @@ cp scripts/config.example.json scripts/config.json
 ```
 
 The Docker approach:
-- Requires no Python installation on the server
+- Requires no Node.js installation on the server
 - Creates an isolated environment
 - Can be run from any directory
 - Automatically creates the output directory if it doesn't exist
@@ -39,32 +39,38 @@ The Docker approach:
 
 ---
 
-## Running with Python (Development)
+## Running with Node.js (Development)
 
 **Requirements**:
-- Python 3.6+ (no external dependencies)
+- Node.js 22+ (already required to build the app)
 
 **Setup**:
 ```bash
-# 1. Create config file from template
+# 1. Install dependencies (if not already done)
+npm install
+
+# 2. Create config file from template
 cp scripts/config.example.json scripts/config.json
 
-# 2. Edit config.json and add your API keys
+# 3. Edit config.json and add your API keys
 # (File is git-ignored for security)
 ```
 
 **Usage**:
 ```bash
-python3 scripts/fetch-job-export.py
+node scripts/fetch-job-export.js
+# or
+npm run fetch-export
 ```
 
 **What it does**:
-1. Fetches 246 organizations from CampOS API
-2. Fetches 181 jobs from CampOS API
+1. Fetches organizations from CampOS API
+2. Fetches jobs from CampOS API
 3. Joins jobs with organizational hierarchy (område/udvalg/team/arbejdsgruppe)
-4. Applies organization name overrides (e.g., "Havet" → "Havet (underlejr)")
+4. Applies organization name overrides from `src/config/org-overrides.js`
 5. Formats dates to Danish format (DD-MM-YYYY)
-6. Outputs to `sl2026-jobbank/public/jobs-export.json`
+6. Outputs to `public/jobs-export.json`
+7. Generates per-job OG HTML pages in `public/job/` (when `public/index.html` exists)
 
 **Scheduling**: Run on a cron schedule to keep data fresh (see Cron Job Setup below).
 
@@ -85,14 +91,14 @@ python3 scripts/fetch-job-export.py
   "create_date": "2025-05-06T23:59:57.525504+02:00",
   "formatted_create_date": "06-05-2025",
   "org_hierarchy": {
-    "område": "Lejrplads & Lejrliv (LEJ)",
-    "område_full": "5500 - Lejrplads & Lejrliv (LEJ)",
-    "udvalg": "Handel, mad & Indkøb",
-    "udvalg_full": "5590 - Handel, mad & Indkøb",
+    "area": "Lejrplads & Lejrliv (LEJ)",
+    "area_full": "5500 - Lejrplads & Lejrliv (LEJ)",
+    "committee": "Handel, mad & Indkøb",
+    "committee_full": "5590 - Handel, mad & Indkøb",
     "team": "Voksenområde",
     "team_full": "5598 - Voksenområde",
-    "arbejdsgruppe": "Bar 2",
-    "arbejdsgruppe_full": "55982 - Bar 2"
+    "workgroup": "Bar 2",
+    "workgroup_full": "55982 - Bar 2"
   }
 }
 ```
@@ -119,17 +125,7 @@ Template for creating `config.json`. Committed to git.
 
 ## Organization Name Overrides
 
-The script includes organization name overrides (hardcoded in Python):
-```python
-ORG_NAME_OVERRIDES = {
-    'Havet': 'Havet (underlejr)',
-    'Skoven': 'Skoven (underlejr)',
-    'Byen': 'Byen (underlejr)',
-    'Landet': 'Landet (underlejr)',
-}
-```
-
-⚠️ These must be kept in sync with `src/config/org-overrides.js`
+Organization name overrides are defined in `src/config/org-overrides.js` and imported directly by the script — no duplication required.
 
 ---
 
@@ -152,19 +148,19 @@ crontab -e
 
 **Important**: Use absolute paths in cron jobs!
 
-### With Python
+### With Node.js
 
-To run the Python script directly on a schedule:
+To run the Node.js script directly on a schedule:
 
 ```bash
 # Edit crontab
 crontab -e
 
 # Add entry to run daily at 3 AM
-0 3 * * * cd /path/to/SpejdernesLejr/jobbank && python3 scripts/fetch-job-export.py >> logs/job-export.log 2>&1
+0 3 * * * cd /path/to/sl2026-jobbank && node scripts/fetch-job-export.js >> logs/job-export.log 2>&1
 
 # Or run every 6 hours
-0 */6 * * * cd /path/to/SpejdernesLejr/jobbank && python3 scripts/fetch-job-export.py >> logs/job-export.log 2>&1
+0 */6 * * * cd /path/to/sl2026-jobbank && node scripts/fetch-job-export.js >> logs/job-export.log 2>&1
 ```
 
 Create the logs directory:
@@ -193,4 +189,4 @@ cp scripts/config.example.json scripts/config.json
 
 **"Date formatting fails"**:
 - Ensure API returns dates in ISO 8601 format
-- Check timezone handling in `format_date_danish()`
+- Check the date string format in the API response

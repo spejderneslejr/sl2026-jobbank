@@ -1,18 +1,15 @@
-# Lightweight Python image
-FROM python:3.11-alpine
-
-# Set working directory
+FROM node:22-alpine
 WORKDIR /app
 
-# Copy the script and config
-COPY fetch-job-export.py .
+# Install dependencies (marked)
+COPY package.json .
+RUN npm install
+
+COPY fetch-job-export.js .
+COPY org-overrides.js .
 COPY config.json .
 
-# Set output directory environment variable
 ENV OUTPUT_DIR=/output
-
-# Create output directory
 RUN mkdir -p /output
 
-# Run the script
-CMD ["python3", "fetch-job-export.py"]
+CMD ["node", "fetch-job-export.js"]
