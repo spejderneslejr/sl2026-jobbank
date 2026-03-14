@@ -7,7 +7,15 @@
           <h1 class="site-title">{{ appHeader }}</h1>
         </div>
       </div>
-      <ThemeToggle />
+      <div class="header-right">
+        <a
+          href="https://tilmelding.spejderneslejr.dk/web/login"
+          class="login-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        ><span class="login-label"><span class="login-label-prefix">Frivillig </span>Log Ind</span><span class="login-sub">for eksisterende frivillige</span></a>
+        <ThemeToggle />
+      </div>
     </div>
   </header>
 </template>
@@ -118,6 +126,48 @@ export default {
   .site-title {
     font-size: var(--font-size-2xl);
   }
+
+  .login-label-prefix {
+    display: none;
+  }
+
+  .login-sub {
+    display: none;
+  }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.login-link {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: var(--color-primary-green);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.login-label {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.login-sub {
+  font-size: 0.65rem;
+  font-weight: var(--font-weight-normal);
+  opacity: 0.75;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.login-link:hover {
+  opacity: 0.75;
 }
 
 /* Print styles */
