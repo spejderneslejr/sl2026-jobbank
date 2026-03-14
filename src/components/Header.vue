@@ -131,9 +131,6 @@ export default {
     display: none;
   }
 
-  .login-sub {
-    display: none;
-  }
 }
 
 .header-right {
@@ -164,6 +161,7 @@ export default {
   opacity: 0.75;
   letter-spacing: 0;
   text-transform: none;
+  text-align: right;
 }
 
 .login-link:hover {
