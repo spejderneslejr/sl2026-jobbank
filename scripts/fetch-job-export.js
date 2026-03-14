@@ -66,7 +66,7 @@ async function fetchJson(url) {
   let response
   try {
     response = await fetch(url, {
-      headers: { 'User-Agent': 'JobBank/1.0' },
+      headers: { 'User-Agent': 'JobBank/1.0', 'Accept-Language': 'da' },
       signal: AbortSignal.timeout(30_000),
     })
   } catch (e) {
