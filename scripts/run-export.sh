@@ -67,9 +67,9 @@ echo "Script directory: $SCRIPT_DIR"
 echo "Site URL:         $SITE_URL"
 echo ""
 
-# Build the Docker image (build context is project root so both scripts/ and src/ are available)
+# Build the Docker image
 echo "Building Docker image..."
-docker build -t "$IMAGE_NAME" -f "$SCRIPT_DIR/Dockerfile" "$(dirname "$SCRIPT_DIR")"
+docker build -t "$IMAGE_NAME" "$SCRIPT_DIR"
 echo ""
 
 # Run the container

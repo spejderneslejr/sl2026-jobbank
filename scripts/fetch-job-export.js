@@ -23,7 +23,7 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync, statSync, 
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { marked } from 'marked'
-import { ORG_NAME_OVERRIDES } from '../src/config/org-overrides.js'
+import { ORG_NAME_OVERRIDES } from './org-overrides.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -304,23 +304,28 @@ function stripHtmlTags(text) {
   return (text || '').replace(/<[^>]+>/g, '').trim()
 }
 
+const FALLBACK_HTML = `<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jobbank - Spejdernes Lejr 2026</title>
+</head>
+<body></body>
+</html>`
+
 /**
  * Generate per-job OG HTML pages alongside index.html.
  *
- * Reads the deployed index.html from outputDir, injects per-job OG meta tags,
- * and writes {outputDir}/job/{slug}/index.html for each job.
- *
- * Skips silently if index.html is not present (e.g. local dev where outputDir
- * is public/ and no build has run).
+ * Uses the deployed index.html from outputDir as the base template if present,
+ * otherwise falls back to a minimal HTML template.
+ * Writes {outputDir}/job/{slug}/index.html for each job.
  */
 function generateOgPages(jobs, outputDir) {
   const indexPath = join(outputDir, 'index.html')
-  if (!existsSync(indexPath)) {
-    console.log('Skipping OG page generation: index.html not found in output directory')
-    return
-  }
-
-  const baseHtml = readFileSync(indexPath, 'utf8')
+  const baseHtml = existsSync(indexPath)
+    ? readFileSync(indexPath, 'utf8')
+    : FALLBACK_HTML
   const titleMatch = baseHtml.match(/<title>([^<]*)<\/title>/)
   const siteTitle = titleMatch ? titleMatch[1] : 'Jobbank - Spejdernes Lejr 2026'
 
