@@ -9,7 +9,7 @@
       </div>
       <div class="header-right">
         <a
-          href="https://tilmelding.spejderneslejr.dk/web/login"
+          href="https://tilmelding.spejderneslejr.dk/member/mypage"
           class="login-link"
           target="_blank"
           rel="noopener noreferrer"
